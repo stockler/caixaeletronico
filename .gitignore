@@ -4,6 +4,7 @@
 # Logs
 logs
 *.log
+npm-debug.log*
 
 # Runtime data
 pids
@@ -26,6 +27,7 @@ build/Release
 # Commenting this out is preferred by some people, see
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
 node_modules
+jspm_packages
 
 # Users Environment Variables
 .lock-wscript
@@ -34,3 +36,12 @@ node_modules
 config/runtime.yaml
 api/**/*.js
 test/**/*.js
+
+# nyc test coverage
+.nyc_output
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
