@@ -10,7 +10,8 @@
   "dependencies": {
     "express": "^4.12.3",
     "swagger-express-mw": "^0.1.0",
-    "gulp": "^3.9.1"
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
