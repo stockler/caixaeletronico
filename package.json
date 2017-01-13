@@ -23,6 +23,6 @@
   "scripts": {
     "start": "node app.js",
     "test": "swagger project test",
-    "postinstall": "gulp build"
+    "postinstall": "./node_modules/.bin/gulp build"
   }
 }
