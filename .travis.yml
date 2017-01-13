@@ -13,6 +13,6 @@ script:
     - npm test
 deploy:
   provider: heroku  
-  app: caixaeletronico
+  app: caixaeletronicotest
   api_key:
     secure: 29d06ac0-6368-440d-9039-c9acfa543aae
