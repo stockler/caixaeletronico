@@ -10,7 +10,7 @@ before_script:
 install:
   - npm install
 script:
-  - gulp test
+  - gulp build-test
   - npm test
 deploy:
   provider: heroku  
