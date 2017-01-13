@@ -10,7 +10,7 @@ gulp.task('build', function (callback) {
     ;
 });
 
-gulp.task('test', ['build'], function (callback) {
+gulp.task('build-test', ['build'], function (callback) {
   return gulp.src(['./test/**/*.es6'])
     .pipe(babel({
       presets: ['es2015']

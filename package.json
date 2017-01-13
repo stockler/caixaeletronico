@@ -21,8 +21,8 @@
     "supertest": "^1.0.0"
   },
   "scripts": {
-    "prestart": "./node_modules/.bin/gulp build",
-    "start": "swagger project start",
-    "test": "./node_modules/.bin/gulp test && swagger project test"
+    "start": "node app.js",
+    "test": "swagger project test",
+    "postinstall": "gulp build"
   }
 }
