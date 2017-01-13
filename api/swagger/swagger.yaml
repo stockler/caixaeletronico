@@ -1,0 +1,89 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: Caixa Eletronico App
+# during dev, should point to your local machine
+host: localhost:10010
+# basePath prefixes all resource paths 
+basePath: /rest
+# 
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+paths:
+  /withdrawal/{cash}:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: atm
+    get:
+      description: Returns your cash
+      # used as the method name of the controller
+      operationId: withdrawal
+      parameters:
+        - name: cash
+          in: path
+          description: The value of the withdrawal
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/WithdrawalResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /deposit/{cash}:
+    x-swagger-router-controller: atm
+    post:
+      description: Deposit your cash
+      # used as the method name of the controller
+      operationId: deposit
+      parameters:
+        - name: cash
+          in: path
+          description: The value of the deposit
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/DepositResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /swagger:
+    x-swagger-pipe: swagger_raw
+# complex objects have schema definitions
+definitions:
+  WithdrawalResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  DepositResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
