@@ -7,8 +7,6 @@ let session = require('express-session');
 let bodyParser = require('body-parser');
 let path = require('path');
 let helmet = require('helmet');
-let compression = require('compression');
-let session = require('express-session');
 
 
 app.use(compression());
@@ -19,6 +17,9 @@ app.set('trust proxy', 1) // trust first proxy
 app.use( session({
    secret : 'GSW_ATM!!@.@',
    name : 'sessionId',
+   proxy: true,
+   resave: true,
+   saveUninitialized: true
   })
 );
 
