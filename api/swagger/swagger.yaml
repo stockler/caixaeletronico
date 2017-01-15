@@ -19,7 +19,17 @@ produces:
   - application/json
 paths:
   /withdrawal/{cash}:
-    # binds a127 app logic to a route
+    options:
+      responses:
+        default:
+          description: CORS headers for all operations
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+              default: https://caixaeletronico-frontend.herokuapp.com
+            Access-Control-Allow-Headers:
+              type: string
+              default: X-UA-Compatible, X-XSS-Protection
     x-swagger-router-controller: atm
     get:
       description: Returns your cash
@@ -43,6 +53,17 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
   /deposit/{cash}:
+    options:
+      responses:
+        default:
+          description: CORS headers for all operations
+          headers:
+            Access-Control-Allow-Origin:
+              type: string
+              default: https://caixaeletronico-frontend.herokuapp.com
+            Access-Control-Allow-Headers:
+              type: string
+              default: X-UA-Compatible, X-XSS-Protection
     x-swagger-router-controller: atm
     post:
       description: Deposit your cash
