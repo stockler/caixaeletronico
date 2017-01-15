@@ -2,7 +2,6 @@
 
 let SwaggerExpress = require('swagger-express-mw');
 let app = require('express')();
-let middleware = require('swagger-express-middleware');
 let compression = require('compression')
 let session = require('express-session');
 let bodyParser = require('body-parser');
@@ -27,6 +26,13 @@ app.use( session({
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+app.use(function(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', 'https://caixaeletronico-frontend.herokuapp.com');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, content-type, Authorization, X-UA-Compatible, X-XSS-Protection');
+  next();
+});
+
 module.exports = app; // for testing
 
 let config = {
@@ -35,9 +41,6 @@ let config = {
 
 SwaggerExpress.create(config, function(err, swaggerExpress) {
   if (err) { throw err; }
-
-  app.use(middleware.metadata());
-  app.use(middleware.CORS());
   // install middleware
   swaggerExpress.register(app);
 
