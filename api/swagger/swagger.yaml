@@ -41,18 +41,24 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-  /deposit/{cash}:    
+  /deposit:    
     x-swagger-router-controller: atm
     post:
       description: Deposit your cash
       # used as the method name of the controller
       operationId: deposit
+      consumes:
+        - application/json
+      produces:
+        - application/json
+        - text/xml
+        - text/html
       parameters:
-        - name: cash
-          in: path
-          description: The value of the deposit
+        - name: body
+          in: formData
+          description: The object of the deposit
           required: true
-          type: integer
+          type: string
       responses:
         "200":
           description: Success
