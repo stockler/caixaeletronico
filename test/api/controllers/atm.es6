@@ -20,7 +20,7 @@ describe('controllers', () => {
           .end((err, res) => {
             should.not.exist(err);
 
-            res.body.should.eql('Você está realizando o saque de R$ 100 reais!');
+            res.body.should.be.a.Array();
 
             done();
           });
