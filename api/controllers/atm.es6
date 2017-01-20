@@ -13,20 +13,25 @@
 import util from 'util';
 import AtmModel from '../models/atm';
 
-function calc(currency, value, leftover, index, length) {
-  let nCurrency = [];
-  for (let i = index; i < length; i++) {
-    let obj = currency[i];
+function recursiveCalc(cashList, currency, value, leftover, index, last) {
 
-    const newObj = {
-      name: obj.name
-    };
-    const cash = parseInt(obj.name);
-    if (leftover > 0) {
-      value += leftover;
-      leftover = 0;
-    }
-    let result = parseInt(value/cash);
+  if (value <= 1 || index === currency.length) {
+    return value;
+  } 
+
+  let obj = currency[index];
+
+  const newObj = {
+    name: obj.name
+  };
+  const cash = parseInt(obj.name);
+  if (leftover > 0) {
+    value += leftover;
+    leftover = 0;
+  }
+  let result = parseInt(value/cash);
+
+  if (result > 0) {
     if (result > obj.qtd) {
       leftover = (result - obj.qtd)*cash;
       newObj.qtd = obj.qtd;
@@ -34,56 +39,38 @@ function calc(currency, value, leftover, index, length) {
     } else {
       newObj.qtd = result;
     }
-    
+
+    cashList.push(newObj); 
     value %= cash;
-    
-    nCurrency.push(newObj);
   }
 
-  return [nCurrency, value, leftover];
+  if (value < 10 && last > 0) {
+    value += last;
+    last = 0;
+  }
+  
+  return recursiveCalc(cashList, currency, value, leftover, index + 1, last);
+  
 }
 
 function cashRescue(value, currency) {
   let leftover = 0;
   
-  const last= value%10;
-  console.log("last :: "+ last);
+  const last = value % 10;
 
   value = value - last;
   
   currency = currency
-    .sort(function(o1, o2) {
+    .sort((o1, o2) => {
       return o1.name - o2.name;
     })
     .reverse();
 
-  let j = currency.length - 2;
+  const result = [];
 
-  let [nCurrency, nValue, nLeftover] = calc(currency, value, 0, 0, j);
-
-  value = nValue;
-  leftover = nLeftover;
-
-  value = value + last;
-
-  let [n2Currency, n2Value, n2Leftover] = calc(currency, value, leftover, j, currency.length);
+  value = recursiveCalc(result, currency, value, 0, 0, last);
   
-  value = n2Value;
-  leftover = n2Leftover;
-
-  if (value >= 1) {
-    value = nValue + last;
-
-    let [n3Currency, n3Value, n3Leftover] = calc(currency, value, leftover, j+1, currency.length);
-
-    nCurrency = nCurrency.concat(n3Currency);
-    value = n3Value;
-    leftover = n3Leftover;
-  } else {
-    nCurrency = nCurrency.concat(n2Currency);
-  }
-  
-  return [nCurrency, value];
+  return [result, value];
 }
 
 class Atm {
@@ -98,11 +85,20 @@ class Atm {
       })
       .then((cash) => {
 
+        const total = cash.reduce((a, b) => {
+          return parseInt(b.name)*b.qtd + a;
+        }, 0);
+
+        if (value > total) {
+          let msg = `Desculpem-nos, não temos esse valor em notas. Por favor, tente outro valor menor que R$ ${total} Reais!`;           
+          throw new Error(msg); 
+        }
+
         const [result, rest] = cashRescue(value, cash);
         
         if (rest >= 1) {
-          let msg = util.format('O valor requisitado não pode ser sacado. Por favor, tente outro valor válido!');           
-          return res.status(500).json(msg); 
+          let msg = 'O valor requisitado não pode ser sacado. Por favor, tente outro valor válido!';           
+          throw new Error(msg); 
         }   
 
         return result;
@@ -130,8 +126,7 @@ class Atm {
         return res.status(200).json(result);      
       })      
       .catch((err) => {
-        console.log("Error ", err);
-        let msg = util.format(err);    
+        let msg = util.format(err.message);    
         return res.status(500).json(msg);
       });   
     
@@ -139,8 +134,6 @@ class Atm {
   
   static deposit(req, res) {    
     let cash = req.swagger.params.body.value;
-
-    console.log(cash);
 
     let promiseAll = [];
 
@@ -167,14 +160,11 @@ class Atm {
     Promise
       .all(promiseAll)
       .then((result) => {
-        console.log(result);
-        console.log(value);
         let msg = util.format('Você está realizando o depósito de R$ %s reais!', value);    
         return res.json(msg);
       })
       .catch((err) => {
-        console.log("Error ", err);
-        let msg = util.format(err);    
+        let msg = util.format(err.message);    
         return res.status(500).json(msg);
       }); 
     
